@@ -22,6 +22,13 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Vérifier version Node active
+        run: |
+          node --version
+          npm --version
+          which node
+          npx --version
+
       - name: Installer Java 17 (requis pour Gradle/Android)
         uses: actions/setup-java@v4
         with:
@@ -39,6 +46,9 @@ jobs:
 
       - name: Rendre gradlew exécutable
         run: chmod +x android/gradlew
+
+      - name: Vérifier le PATH complet
+        run: echo $PATH
 
       - name: Build de l'APK Debug
         run: cd android && ./gradlew assembleDebug
