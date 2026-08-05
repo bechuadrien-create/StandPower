@@ -1,17 +1,47 @@
-node_modules/
-build/
+# ===== BUILD & GENERATED FILES =====
 dist/
-coverage/
-.DS_Store
-*.log
-.env*
-!.env.example
+build/
+dist-ssr/
+
+# ===== CAPACITOR GENERATED ASSETS (CRITICAL) =====
+# Never commit generated web assets or Capacitor configs
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+
+# ===== ANDROID BUILD FILES =====
 android/.gradle/
 android/app/build/
+android/**/build/
 android/local.properties
 *.apk
-dist-ssr/
+*.aab
+
+# ===== NODE & DEPENDENCIES =====
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ===== IDE & EDITOR =====
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 .capacitor/
 .ionic/
+
+# ===== ENVIRONMENT & SECRETS =====
+.env
+.env.local
+.env.*.local
+!.env.example
 *.pem
 *.jks
+
+# ===== TEMPORARY FILES =====
+*.tmp
+.cache/
+.parcel-cache
+.turbo
