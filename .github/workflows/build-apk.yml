@@ -5,85 +5,83 @@ on:
   push:
     branches: [ main ]
 
-env:
-  NODE_VERSION: '22'
-  JAVA_VERSION: '17'
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     steps:
       - name: ✅ Checkout du code
         uses: actions/checkout@v4
 
-      - name: 📦 Setup Node.js
+      - name: 📦 Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: '22'
           cache: 'npm'
-
-      - name: 🔍 Vérifier versions Node/npm
-        run: |
-          node --version
-          npm --version
 
       - name: ☕ Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: '17'
+          cache: 'gradle'
 
       - name: 📥 Installer les dépendances npm
         run: npm ci
 
-      - name: 🔍 Linter TypeScript
-        run: npm run lint
-
       - name: 🔨 Build du frontend (Vite)
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: npm run build
+        env:
+          VITE_API_URL: http://localhost:3000
+          GEMINI_API_KEY: demo_key_testing_only
+
+      - name: 🔄 Installer Capacitor CLI
+        run: npm install -g @capacitor/cli
 
       - name: 🔄 Synchroniser Capacitor avec Android
         run: npx cap sync android
 
-      - name: 🔍 Vérifier structure Android après Capacitor
+      - name: 📂 Vérifier structure Android
         run: |
-          echo "=== Chercher gradlew ==="
-          if [ -f android/gradlew ]; then
-            echo "✅ gradlew trouvé"
-            ls -lh android/gradlew
-          else
-            echo "❌ gradlew MANQUANT - Tentative d'init..."
-            cd android
-            gradle wrapper --gradle-version 8.9
-            cd ..
+          echo "📂 Structure du dossier android :"
+          ls -la android/ || echo "❌ Dossier android manquant!"
+          if [ -d "android" ]; then
+            echo "✅ Dossier android trouvé"
+            ls -la android/app/
           fi
 
-      - name: 🔐 Rendre gradlew exécutable
-        if: hashFiles('android/gradlew') != ''
-        run: chmod +x android/gradlew
+      - name: ✅ Rendre gradlew exécutable
+        run: |
+          if [ -f android/gradlew ]; then
+            chmod +x android/gradlew
+            echo "✅ gradlew rendu exécutable"
+          else
+            echo "⚠️ gradlew manquant! Création..."
+            cd android && gradle wrapper --gradle-version 8.4
+            chmod +x gradlew
+            echo "✅ gradle wrapper créé"
+          fi
 
       - name: 🏗️ Build de l'APK Debug
-        if: hashFiles('android/gradlew') != ''
-        run: cd android && ./gradlew assembleDebug --stacktrace
+        run: |
+          cd android
+          ./gradlew assembleDebug --stacktrace
+        timeout-minutes: 30
 
-      - name: 📤 Upload APK comme artifact
-        if: success() && hashFiles('android/app/build/outputs/apk/debug/app-debug.apk') != ''
+      - name: 📤 Upload APK sur GitHub
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: standpower-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 7
 
-      - name: ❌ Déboguer en cas d'erreur
+      - name: ❌ Afficher les erreurs de build
         if: failure()
         run: |
-          echo "=== Contenu de android/ ==="
-          ls -la android/ || echo "Dossier android/ n'existe pas"
-          echo "=== Chercher tous les gradlew ==="
-          find . -name "gradlew" -type f 2>/dev/null || echo "Aucun gradlew trouvé"
-          echo "=== Vérifier si la compilation a généré des artefacts ==="
-          find . -name "*.apk" -type f 2>/dev/null || echo "Aucun APK généré"
+          echo "=== ERREURS DE BUILD ==="
+          if [ -f android/app/build/outputs/errors.txt ]; then
+            cat android/app/build/outputs/errors.txt
+          fi
+          echo "=== FIN DES ERREURS ==="

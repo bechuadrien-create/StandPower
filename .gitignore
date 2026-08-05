@@ -6,3 +6,12 @@ coverage/
 *.log
 .env*
 !.env.example
+android/.gradle/
+android/app/build/
+android/local.properties
+*.apk
+dist-ssr/
+.capacitor/
+.ionic/
+*.pem
+*.jks
