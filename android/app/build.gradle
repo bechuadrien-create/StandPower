@@ -53,3 +53,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
+
+try {
+    apply from: 'capacitor.build.gradle'
+} catch (Exception e) {
+    logger.info("capacitor.build.gradle missing; Skipping ...")
+}
+
