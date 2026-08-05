@@ -3,6 +3,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
@@ -10,18 +11,21 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(express.json());
+  // CORS Middleware configured for process.env.APP_URL and Capacitor mobile origins
+  const appUrl = process.env.APP_URL;
+  app.use(cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile app, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (!appUrl || appUrl === "*" || origin === appUrl || origin.startsWith("https://localhost") || origin.startsWith("http://localhost") || origin.startsWith("capacitor://")) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
+    credentials: true
+  }));
 
-  // CORS middleware for mobile client requests (Capacitor https://localhost or remote origin)
-  app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    if (req.method === "OPTIONS") {
-      return res.sendStatus(200);
-    }
-    next();
-  });
+  app.use(express.json());
 
   // API Route - Health Check
   app.get("/api/health", (req, res) => {
@@ -37,7 +41,12 @@ async function startServer() {
       return res.status(400).json({ error: "Le nom de l'exercice est requis et doit être une chaîne." });
     }
 
-    const sanitizedExercise = exerciseName.trim().replace(/[<>{}]/g, "");
+    // Strip HTML/script tags and limit length to 150 chars max
+    const sanitizedExercise = exerciseName
+      .replace(/<[^>]*>?/gm, "")
+      .replace(/[<>{}]/g, "")
+      .trim();
+
     if (sanitizedExercise.length === 0 || sanitizedExercise.length > 150) {
       return res.status(400).json({ error: "Nom d'exercice invalide ou trop long (max 150 caractères)." });
     }
@@ -78,7 +87,7 @@ La réponse doit être structurée sous forme de JSON valide contenant :
 Sois précis, professionnel et concis sur l'anatomie et la mécanique athlétique. Ne renvoie rien d'autre que le JSON brut.`;
 
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
@@ -116,7 +125,7 @@ Sois précis, professionnel et concis sur l'anatomie et la mécanique athlétiqu
       console.error("Gemini instruction generator error:", error);
       return res.json({
         properForm: [
-          `Exécutez le mouvement de ${exerciseName} avec contrôle.`,
+          `Exécutez le mouvement de ${sanitizedExercise} avec contrôle.`,
           "Inspirez lors de la phase excentrique, expirez lors de la phase concentrique.",
           "Maintenez une posture stable et sécuritaire."
         ],

@@ -1,0 +1,50 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      VITE_API_URL: ${{ secrets.VITE_API_URL }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Installer Java 17 (requis pour Gradle/Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Installer les dépendances npm
+        run: npm install
+
+      - name: Build du frontend (Vite)
+        run: npm run build
+
+      - name: Synchroniser Capacitor avec le dossier android existant
+        run: npx cap sync android
+
+      - name: Rendre gradlew exécutable
+        run: chmod +x android/gradlew
+
+      - name: Build de l'APK Debug
+        run: cd android && ./gradlew assembleDebug
+
+      - name: Upload de l'APK comme artifact téléchargeable
+        uses: actions/upload-artifact@v4
+        with:
+          name: standpower-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk

@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.adgame.app'
+    namespace 'com.standpower.app'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.adgame.app"
+        applicationId "com.standpower.app"
         minSdk 24
         targetSdk 34
         versionCode 1
