@@ -46,7 +46,7 @@ dependencies {
     implementation 'androidx.core:core:1.12.0'
     
     // Capacitor Core & Plugins
-    implementation 'com.getcapacitor:android:6.0.0'
+    implementation project(':capacitor-android')
     
     // Testing
     testImplementation 'junit:junit:4.13.2'
