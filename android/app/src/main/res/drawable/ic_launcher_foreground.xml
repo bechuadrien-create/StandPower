@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Central Inked Backing Polygon -->
+    <path
+        android:fillColor="#FF0B031A"
+        android:strokeColor="#FF10B981"
+        android:strokeWidth="1.5"
+        android:pathData="M54,18 L76,32 L88,54 L76,78 L54,90 L32,78 L20,54 L32,32 Z" />
+        
+    <path
+        android:fillColor="#FF1C093B"
+        android:strokeColor="#FF8B5CF6"
+        android:strokeWidth="0.8"
+        android:pathData="M54,22 L72,34 L82,54 L72,74 L54,84 L36,74 L26,54 L36,34 Z" />
+
+    <!-- Inked Manga Outlines 'S' and 'P' -->
+    <path
+        android:fillColor="#FF05010D"
+        android:pathData="M 47,33 L 33,33 L 29,48 L 42,50 L 40,62 L 26,62 L 24,71 L 47,71 L 51,54 L 37,52 L 39,41 L 49,41 Z" />
+    
+    <path
+        android:fillColor="#FF05010D"
+        android:pathData="M 53,33 L 74,33 L 78,50 L 69,57 L 64,57 L 62,71 L 51,71 L 59,33 Z" />
+
+    <!-- Stylized 'S' -->
+    <path
+        android:pathData="M 46,34 L 34,34 L 30,47 L 41,49 L 39,61 L 27,61 L 25,70 L 46,70 L 50,55 L 38,53 L 40,42 L 48,42 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="25"
+                android:startY="34"
+                android:endX="50"
+                android:endY="70">
+                <item android:offset="0.0" android:color="#FFF5F3FF" />
+                <item android:offset="0.4" android:color="#FFC4B5FD" />
+                <item android:offset="1.0" android:color="#FF8B5CF6" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    
+    <!-- 'S' Emerald Accent -->
+    <path
+        android:fillColor="#FF10B981"
+        android:pathData="M 45,36 L 36,36 L 33,45 L 42,47 L 40,50 L 32,49 L 34,39 L 44,39 Z" />
+
+    <!-- Stylized 'P' -->
+    <path
+        android:pathData="M 54,34 L 73,34 L 77,49 L 68,56 L 63,56 L 61,70 L 52,70 L 60,34 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="52"
+                android:startY="34"
+                android:endX="77"
+                android:endY="70">
+                <item android:offset="0.0" android:color="#FFF5F3FF" />
+                <item android:offset="0.4" android:color="#FFC4B5FD" />
+                <item android:offset="1.0" android:color="#FF8B5CF6" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    
+    <!-- 'P' Hole -->
+    <path
+        android:fillColor="#FF130528"
+        android:pathData="M 62,40 L 59,51 L 66,51 L 70,47 L 69,40 Z" />
+
+    <!-- 'P' Emerald Accent -->
+    <path
+        android:fillColor="#FF10B981"
+        android:pathData="M 56,36 L 72,36 L 75,48 L 68,54 L 64,54 L 62,68 L 54,68 L 61,42 L 57,42 Z" />
+
+    <!-- Energy Bolt / Manga Impact Streak -->
+    <path
+        android:fillColor="#FFA7F3D0"
+        android:pathData="M 49,24 L 53,33 L 50,34 L 55,45 L 51,46 L 57,58 L 53,58 L 61,76 L 58,76 L 63,85 L 60,86 L 55,75 L 57,74 L 51,59 L 53,58 L 47,46 L 50,45 L 46,33 L 49,33 Z" />
+</vector>
