@@ -20,12 +20,11 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: ☕ Setup Java 17
+      - name: ☕ Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
+          java-version: '21'
 
       - name: 📥 Installer les dépendances npm
         run: npm ci
@@ -36,32 +35,31 @@ jobs:
           VITE_API_URL: http://localhost:3000
           GEMINI_API_KEY: demo_key_testing_only
 
-      - name: 🔄 Installer Capacitor CLI
-        run: npm install -g @capacitor/cli
-
       - name: 🔄 Synchroniser Capacitor avec Android
         run: npx cap sync android
 
-      - name: 📂 Vérifier structure Android
-        run: |
-          echo "📂 Structure du dossier android :"
-          ls -la android/ || echo "❌ Dossier android manquant!"
-          if [ -d "android" ]; then
-            echo "✅ Dossier android trouvé"
-            ls -la android/app/
-          fi
+      - name: 🐘 Setup Gradle 8.13 officiel
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
 
-      - name: ✅ Rendre gradlew exécutable
+      - name: 🔧 Régénération forcée du wrapper Gradle
         run: |
-          if [ -f android/gradlew ]; then
-            chmod +x android/gradlew
-            echo "✅ gradlew rendu exécutable"
-          else
-            echo "⚠️ gradlew manquant! Création..."
-            cd android && gradle wrapper --gradle-version 8.4
-            chmod +x gradlew
-            echo "✅ gradle wrapper créé"
-          fi
+          echo "⚙️ Suppression de l'ancien wrapper (potentiellement corrompu)..."
+          rm -f android/gradlew android/gradlew.bat
+          rm -f android/gradle/wrapper/gradle-wrapper.jar
+          rm -f android/gradle/wrapper/gradle-wrapper.properties
+          echo "⚙️ Régénération propre du wrapper Gradle 8.13 via la commande officielle..."
+          cd android
+          gradle wrapper --gradle-version 8.13 --distribution-type all
+          cd ..
+          echo "✅ Wrapper régénéré :"
+          ls -la android/gradlew android/gradle/wrapper/
+
+      - name: ✅ Configurer les permissions d'exécution de gradlew
+        run: |
+          chmod +x android/gradlew
+          echo "✅ gradlew rendu exécutable"
 
       - name: 🏗️ Build de l'APK Debug
         run: |

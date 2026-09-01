@@ -9,6 +9,8 @@ buildscript {
     }
 }
 
+apply from: "variables.gradle"
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
