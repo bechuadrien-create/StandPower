@@ -1,0 +1,92 @@
+name: Build Web & Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-test:
+    name: Test, Build Web & Compile Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Java JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: TypeScript typecheck
+        run: npm run typecheck
+
+      - name: ESLint check
+        run: npm run lint
+
+      - name: Run Unit & Integration Tests (Vitest)
+        run: npm test
+
+      - name: Build Production Web Bundle
+        run: npm run build
+
+      - name: Sync Capacitor Android Project
+        run: npx cap sync android
+
+      - name: Grant execute permission for Gradlew
+        run: chmod +x android/gradlew
+
+      - name: Compile Android Debug APK
+        working-directory: ./android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Rename APK for convenient download
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk StandPower-debug.apk
+
+      - name: Upload Android APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: StandPower-Android-APK
+          path: StandPower-debug.apk
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Upload Web Dist Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: StandPower-Web-Dist
+          path: dist/
+          retention-days: 30
+
+      - name: Publish / Update Latest GitHub Release with APK
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "StandPower — Dernier APK Android compilé automatiquement"
+          body: |
+            APK Android Debug compilé automatiquement depuis le commit `${{ github.sha }}`.
+            - Téléchargez **`StandPower-debug.apk`** ci-dessous sur votre téléphone Android pour l'installer directement.
+          files: StandPower-debug.apk
+          prerelease: false
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

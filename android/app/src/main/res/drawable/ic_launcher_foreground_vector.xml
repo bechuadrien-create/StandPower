@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Cadre octogonal sobre typé tatami / carnet -->
+    <path
+        android:fillColor="#222722"
+        android:strokeColor="#A8B89A"
+        android:strokeWidth="2.5"
+        android:pathData="M42,26 L66,26 L82,42 L82,66 L66,82 L42,82 L26,66 L26,42 Z" />
+    <!-- Haltère stylisé en sauge (#A8B89A) -->
+    <path
+        android:fillColor="#A8B89A"
+        android:pathData="M34,46 L40,46 L40,62 L34,62 Z M42,52 L66,52 L66,56 L42,56 Z M68,46 L74,46 L74,62 L68,62 Z" />
+    <!-- Ceinture / repère terre cuite (#C88D74) -->
+    <path
+        android:fillColor="#C88D74"
+        android:pathData="M46,66 L62,66 L62,70 L46,70 Z" />
+</vector>
