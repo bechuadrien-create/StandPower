@@ -23,6 +23,8 @@ import {
   Card,
   EmptyState,
 } from '../../components/ui/Primitives';
+import { ExerciseVisualizer } from '../../components/ExerciseVisualizer';
+import { AiCoachPanel } from '../../components/AiCoachPanel';
 import {
   createInitialTimerState,
   evaluateCombatTimer,
@@ -486,6 +488,15 @@ export function CombatPage() {
           </button>
         ))}
       </div>
+
+      {/* Assistant Coach IA Gemini 2.5 Combat & Préparation Physique */}
+      <AiCoachPanel
+        context={{
+          disciplines: ['JJB/BJJ', 'Boxe', 'MMA'],
+          recentCombatCount: snapshot.combatSessions.length,
+          recentWorkoutsCount: snapshot.workoutSessions.length,
+        }}
+      />
 
       {/* ==================== ONGLET 1 : JOURNAL JJB / COMBAT ==================== */}
       {activeTab === 'journal' && (
@@ -1490,6 +1501,9 @@ export function CombatPage() {
                   Fermer
                 </Button>
               </div>
+
+              {/* Animateur Stickman SVG Cinématique & Carte Anatomique pour le Drill */}
+              <ExerciseVisualizer exerciseName={selectedDrillDetail.nameFr} />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="bg-sp-elevated rounded-xl p-3 space-y-1">

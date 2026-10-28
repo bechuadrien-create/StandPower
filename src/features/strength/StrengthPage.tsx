@@ -27,6 +27,8 @@ import {
   Card,
   EmptyState,
 } from '../../components/ui/Primitives';
+import { ExerciseVisualizer } from '../../components/ExerciseVisualizer';
+import { AiCoachPanel } from '../../components/AiCoachPanel';
 import {
   calculateExerciseVolume,
   computeExerciseRecords,
@@ -276,6 +278,8 @@ export function StrengthPage() {
   const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [selectedExerciseDetail, setSelectedExerciseDetail] =
     useState<Exercise | null>(null);
+  const [previewWorkoutExerciseId, setPreviewWorkoutExerciseId] =
+    useState<string | null>(null);
 
   // Création d'exercice personnalisé
   const [showCustomForm, setShowCustomForm] = useState(false);
@@ -484,6 +488,15 @@ export function StrengthPage() {
           <span>Historique</span>
         </button>
       </div>
+
+      {/* Calculateur 1RM Brzycki & Assistant Coach IA Gemini 2.5 */}
+      <AiCoachPanel
+        context={{
+          recentWorkoutsCount: completedWorkouts.length,
+          recentCombatCount: snapshot.combatSessions.length,
+          weightKg: snapshot.weightEntries[0]?.weightKg,
+        }}
+      />
 
       {/* Résumé après fin de séance */}
       {completedSummarySession && (
@@ -839,6 +852,19 @@ export function StrengthPage() {
                         <button
                           type="button"
                           onClick={() =>
+                            setPreviewWorkoutExerciseId((prev) =>
+                              prev === we.id ? null : we.id
+                            )
+                          }
+                          className="touch-target px-2.5 py-1.5 rounded-lg text-xs font-medium bg-sp-elevated border border-sp-border text-sp-text hover:border-sp-accent"
+                        >
+                          {previewWorkoutExerciseId === we.id
+                            ? 'Masquer démo'
+                            : 'Démo 3D/2D'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
                             void moveExerciseInActiveWorkout(we.id, 'up')
                           }
                           disabled={exIdx === 0}
@@ -870,6 +896,13 @@ export function StrengthPage() {
                         </button>
                       </div>
                     </div>
+
+                    {previewWorkoutExerciseId === we.id && (
+                      <ExerciseVisualizer
+                        exerciseName={we.exerciseNameSnapshot}
+                        compact
+                      />
+                    )}
 
                     {/* Tableau des séries */}
                     <div className="space-y-2">
@@ -1632,6 +1665,9 @@ export function StrengthPage() {
                   Fermer
                 </Button>
               </div>
+
+              {/* Visualiseur Hybride 3 Niveaux : Flipbook Photo + Stickman SVG + Carte Anatomique + Fiche IA */}
+              <ExerciseVisualizer exerciseName={selectedExerciseDetail.nameFr} />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="bg-sp-elevated rounded-xl p-3 space-y-1">

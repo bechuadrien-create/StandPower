@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      },
+      "metadata": {
+        "remoteUrl": "https://api.githubcopilot.com/mcp/",
+        "description": "Serveur officiel GitHub MCP pour la gestion des dépôts, issues, pull requests et workflows Actions."
+      }
+    },
+    "gitmcp": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://gitmcp.io/docs"],
+      "metadata": {
+        "url": "https://gitmcp.io/docs",
+        "description": "Serveur git-mcp permettant de lire la documentation et le code de dépôts GitHub à la volée."
+      }
+    },
+    "repomix": {
+      "command": "npx",
+      "args": ["-y", "repomix", "--mcp"],
+      "metadata": {
+        "description": "Serveur MCP Repomix pour analyser et compresser n'importe quel dépôt GitHub externe dans le contexte Gemini."
+      }
+    }
+  }
+}
